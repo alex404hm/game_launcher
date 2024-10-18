@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Furesø e-Sport Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .game-card:hover .game-overlay {
+            opacity: 1;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite;
+        }
+        @keyframes slide-in {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .slide-in {
+            animation: slide-in 0.5s ease-out;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.querySelector("#searchInput");
+            const gameCards = document.querySelectorAll(".game-card");
+            const viewAllButton = document.querySelector("#viewAllButton");
+            let allGamesVisible = false;
+
+            // Enhanced Search Functionality to Search by First and Last Words
+            searchInput.addEventListener("input", function() {
+                const searchTerm = searchInput.value.toLowerCase();
+                gameCards.forEach(card => {
+                    const gameName = card.querySelector(".game-name").innerText.toLowerCase();
+                    const words = gameName.split(" ");
+                    if (gameName.includes(searchTerm) || words.some(word => word.startsWith(searchTerm))) {
+                        card.classList.remove("hidden");
+                    } else {
+                        card.classList.add("hidden");
+                    }
+                });
+            });
+
+            // Handle View All Button
+            viewAllButton.addEventListener("click", function() {
+                if (allGamesVisible) {
+                    viewAllButton.innerText = "View All";
+                    gameCards.forEach((card, index) => {
+                        if (index >= 4) {
+                            card.classList.add("hidden");
+                        }
+                    });
+                } else {
+                    viewAllButton.innerText = "View Less";
+                    gameCards.forEach(card => {
+                        card.classList.remove("hidden");
+                    });
+                }
+                allGamesVisible = !allGamesVisible;
+            });
+
+            // Handle Sidebar Navigation
+            const navLinks = document.querySelectorAll(".nav-link");
+            navLinks.forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const section = this.getAttribute("data-section");
+                    const sections = document.querySelectorAll(".content-section");
+                    sections.forEach(sec => {
+                        if (sec.id === section) {
+                            sec.classList.remove("hidden");
+                        } else {
+                            sec.classList.add("hidden");
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+
+<body class="bg-[#0A0A0B] text-white min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-20 lg:w-72 h-screen fixed bg-[#1B1E24] border-r border-gray-800 flex flex-col slide-in">
+            <div class="p-6 flex items-center justify-start space-x-4">
+                <img src="https://furesoe-esport.dk/____impro/1/onewebmedia/FE%20logo%20trans.png" alt="Logo" class="w-14 h-14 lg:w-20 lg:h-20">
+                <span class="hidden lg:block text-white font-bold text-lg">Furesø e-Sport</span>
+            </div>
+            <nav class="mt-8 space-y-4 flex-1 px-4">
+                <a href="#" class="nav-link flex items-center p-4 rounded-lg text-white hover:bg-blue-500/20 transition-all group hover:scale-105 transform ease-in-out duration-200" data-section="home">
+                    <i class="fas fa-home text-lg"></i>
+                    <span class="ml-4 font-medium">Home</span>
+                </a>
+                <a href="#" class="nav-link flex items-center p-4 rounded-lg text-gray-400 hover:bg-blue-500/20 hover:text-white transition-all group hover:scale-105 transform ease-in-out duration-200" data-section="store">
+                    <i class="fas fa-store text-lg"></i>
+                    <span class="ml-4 font-medium">Store</span>
+                </a>
+                <a href="#" class="nav-link flex items-center p-4 rounded-lg text-gray-400 hover:bg-blue-500/20 hover:text-white transition-all group hover:scale-105 transform ease-in-out duration-200" data-section="library">
+                    <i class="fas fa-gamepad text-lg"></i>
+                    <span class="ml-4 font-medium">Library</span>
+                </a>
+                <a href="#" class="nav-link flex items-center p-4 rounded-lg text-gray-400 hover:bg-blue-500/20 hover:text-white transition-all group hover:scale-105 transform ease-in-out duration-200" data-section="friends">
+                    <i class="fas fa-users text-lg"></i>
+                    <span class="ml-4 font-medium">Friends</span>
+                </a>
+            </nav>
+            <div class="mt-auto p-4">
+                <button class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-lg text-white font-medium transition-colors ease-in-out duration-200 hover:scale-105 transform">Join the Community</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="ml-20 lg:ml-72 p-6 lg:p-10 w-full">
+            <!-- Home Section -->
+            <section id="home" class="content-section">
+                <header class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl lg:text-4xl font-bold">Welcome back, Gamer!</h1>
+                        <p class="text-gray-400 mt-2">Let's continue the adventure!</p>
+                    </div>
+                    <div class="relative">
+                        <input id="searchInput" type="text" placeholder="Search games by title..." class="w-64 lg:w-96 px-4 py-2 rounded-lg bg-[#1F2228] border border-gray-700 focus:outline-none focus:border-blue-500 pl-10">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </header>
+                <!-- Featured Game -->
+                <section class="mb-12 relative overflow-hidden rounded-2xl">
+                    <div class="relative h-[400px] bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl overflow-hidden">
+                        <img src="https://i.redd.it/simplified-the-cs2-background-on-their-website-for-v0-hjrzmal4xgpa1.png?width=4267&format=png&auto=webp&s=82ba490053b5a917f0b7f44062da4750229a130d" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay" alt="Featured Game">
+                        <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
+                        <div class="relative z-10 p-10 h-full flex flex-col justify-end">
+                            <span class="text-blue-400 font-semibold mb-2">Featured Game</span>
+                            <h2 class="text-4xl font-bold mb-4">Counter-Strike 2</h2>
+                            <p class="text-gray-300 mb-6 max-w-xl">Jump into the next evolution of competitive tactical FPS. Experience improved graphics, refined gameplay, and new features.</p>
+                            <div class="flex space-x-4">
+                                <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg transition-colors flex items-center hover:scale-105 transform ease-in-out duration-200">
+                                    <i class="fas fa-play mr-2"></i> Play Now
+                                </button>
+                                <button class="bg-white/10 hover:bg-white/20 px-6 py-3 rounded-lg transition-colors hover:scale-105 transform ease-in-out duration-200">
+                                    Learn More
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Available Games -->
+                <section class="mb-12">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Available Games</h2>
+                        <button id="viewAllButton" class="text-blue-400 hover:text-blue-300 transition-colors hover:scale-105 transform ease-in-out duration-200">View All</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="game-card bg-[#1F2228] rounded-xl overflow-hidden group hover:ring-2 hover:ring-blue-500 transition-all hover:scale-105 transform ease-in-out duration-200">
+                            <div class="relative">
+                                <img src="https://wallpapers.com/images/featured/valorant-305kescxw5dpup7y.jpg" class="w-full aspect-video object-cover" alt="Valorant">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                        Play
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="game-name font-semibold mb-1">Valorant</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-[#1F2228] rounded-xl overflow-hidden group hover:ring-2 hover:ring-blue-500 transition-all hover:scale-105 transform ease-in-out duration-200">
+                            <div class="relative">
+                                <img src="https://i.pinimg.com/originals/e1/c2/8b/e1c28b941a8050149ea89db06ffa02e5.jpg" class="w-full aspect-video object-cover" alt="League of Legends">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                        Play
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="game-name font-semibold mb-1">League of Legends</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-[#1F2228] rounded-xl overflow-hidden group hover:ring-2 hover:ring-blue-500 transition-all hover:scale-105 transform ease-in-out duration-200">
+                            <div class="relative">
+                                <img src="https://wallpapers.com/images/hd/pubg-banner-1920-x-1080-background-prs6to3hgrs8nk7x.jpg" class="w-full aspect-video object-cover" alt="PUBG: Battlegrounds">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                        Play
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="game-name font-semibold mb-1">PUBG: Battlegrounds</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-[#1F2228] rounded-xl overflow-hidden group hover:ring-2 hover:ring-blue-500 transition-all hover:scale-105 transform ease-in-out duration-200">
+                            <div class="relative">
+                                <img src="https://cdn2.steamgriddb.com/hero/e6da32eef072f987685b6eddca072d4f.jpg" class="w-full aspect-video object-cover" alt="Rocket League">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                        Play
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="game-name font-semibold mb-1">Rocket League</h3>
+                            </div>
+                        </div>
+                        <!-- Additional Games (Initially Hidden) -->
+                        <div class="game-card bg-[#1F2228] rounded-xl overflow-hidden group hover:ring-2 hover:ring-blue-500 transition-all hover:scale-105 transform ease-in-out duration-200 hidden">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5" class="w-full aspect-video object-cover" alt="Cyberpunk 2077">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                        Play
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="game-name font-semibold mb-1">Cyberpunk 2077</h3>
+                            </div>
+                        </div>
+                        <div class="game-card bg-[#1F2228] rounded-xl overflow-hidden group hover:ring-2 hover:ring-blue-500 transition-all hover:scale-105 transform ease-in-out duration-200 hidden">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1604023488693-dfedf7445b98" class="w-full aspect-video object-cover" alt="FIFA 22">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg transition-colors">
+                                        Play
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="game-name font-semibold mb-1">FIFA 22</h3>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Store Section -->
+            <section id="store" class="content-section hidden">
+                <h2 class="text-3xl font-bold mb-6">Store</h2>
+                <p class="text-gray-400">Browse the latest games and exclusive offers.</p>
+            </section>
+
+            <!-- Library Section -->
+            <section id="library" class="content-section hidden">
+                <h2 class="text-3xl font-bold mb-6">Library</h2>
+                <p class="text-gray-400">View and manage your game collection.</p>
+            </section>
+
+            <!-- Friends Section -->
+            <section id="friends" class="content-section hidden">
+                <h2 class="text-3xl font-bold mb-6">Friends</h2>
+                <p class="text-gray-400">Connect with your gaming friends.</p>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
